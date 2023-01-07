@@ -62,7 +62,6 @@ function App() {
 
         const { currency, cryptoCurrency } = currencies;
 
-        console.log(currency, cryptoCurrency);
         const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${cryptoCurrency}&tsyms=${currency}`;
         const getData = await fetch(url);
         const data = await getData.json();
