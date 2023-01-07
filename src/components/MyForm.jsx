@@ -25,7 +25,7 @@ margin-top: 30px;
 
 }
 `
-const MyForm = () => {
+const MyForm = ({ setCurrencies }) => {
   const [cryptos, setCryptos] = useState([]);
   const [error, setError] = useState(false);
 
@@ -35,7 +35,7 @@ const MyForm = () => {
   useEffect(() => {
 
     const getAPI = async () => {
-      const url = `https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD`;
+      const url = `https://min-api.cryptocompare.com/data/top/mktcapfull?limit=20&tsym=USD`;
       const get = await fetch(url);
       const result = await get.json();
       const arrayCrytos = result.Data.map(cryto => {
@@ -64,6 +64,10 @@ const MyForm = () => {
     }
 
     setError(false);
+    setCurrencies({
+      currency,
+      cryptoCurrency
+    })
 
   }
 

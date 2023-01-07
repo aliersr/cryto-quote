@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
 
 import MyForm from './components/MyForm';
+import ShowQuote from './components/ShowQuote';
+import Spinner from './components/Spinner';
 import ImagenCryto from './img/imagen-criptos.png';
-import styled from 'styled-components';
 
 const Container = styled.div`
   max-width: 900px;
@@ -12,7 +14,6 @@ const Container = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 2rem;
-        
       }
 `;
 
@@ -21,7 +22,6 @@ const Imagen = styled.img`
   width: 80%;
   margin: 100px auto 0 auto;
   display: block;
-
 `;
 
 const Heading = styled.h1`
@@ -41,10 +41,41 @@ const Heading = styled.h1`
     display: block;
     margin: 10px auto 0 auto;
   }
-
 `;
 
+const Loading = styled.p`
+  color: #FFF;
+`
+
 function App() {
+
+  const [currencies, setCurrencies] = useState({});
+  const [quote, setQuote] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (Object.keys(currencies).length > 0) {
+
+      const quoteCrypto = async () => {
+        setLoading(true);
+        setQuote({});
+
+        const { currency, cryptoCurrency } = currencies;
+
+        console.log(currency, cryptoCurrency);
+        const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${cryptoCurrency}&tsyms=${currency}`;
+        const getData = await fetch(url);
+        const data = await getData.json();
+
+        setQuote(data.DISPLAY[cryptoCurrency][currency]);
+
+        setLoading(false);
+
+      };
+      quoteCrypto();
+    }
+  }, [currencies]);
+
   return (
     <Container>
       <Imagen
@@ -53,8 +84,15 @@ function App() {
       />
       <div>
         <Heading>Cryptocurrency Quote</Heading>
-        <MyForm />
-        
+        <MyForm
+          setCurrencies={setCurrencies}
+        />
+        {loading && <Spinner/>}
+        {quote.PRICE && <ShowQuote
+          quote={quote}
+
+        />}
+
       </div>
     </Container>
   )
